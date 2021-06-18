@@ -87,53 +87,15 @@
 			}
 		};
 
-		// Toggle the spinning of the wheel
-		function toggleSpinning() {
-			// Toggle the spinning animation
-			if (isSpinning) {
-				// Stop the arrow
-				isSpinning = false;
-				clearInterval(toggleSpinning.spinInt);
-				spinButton.removeAttribute("disabled");
-			}
-			else {
-				// Start spinning the arrow
-				isSpinning = true;
-				toggleSpinning.spinInt = setInterval(spinWheel, 1000/60);
-				// Set how long the wheel will be spinning
-				var duration = Math.floor(Math.random() * 2000) + 1000;
-				setTimeout(toggleSpinning, duration);
-				// Disable the spin button
-				spinButton.setAttribute("disabled", "true");
-			}
-		}
-
-		// Animation step for spinning the wheel arrow
-		function spinWheel() {
-			// Rotate the spinner arrow
-			rotation = (rotation + 12) % 360;
-			arrow.setAttributeNS(null, "transform", "rotate("+rotation+",200,200)");
-			// Highlight the slice the arrow is above
-			var newSlice = Math.floor(rotation / (360/numSlices));
-			if (newSlice != currentSlice) {
-				slices[currentSlice].toggleOverlay();
-				slices[newSlice].toggleOverlay();
-				currentSlice = newSlice;
-			}
-		}
-
 		// Document ready event
 		document.addEventListener("DOMContentLoaded", function() {
 			// Get a handle to all necessary DOM elements
 			wheel = document.getElementById("spinner-board"); // DOM Object for the spinner board
 			arrow = document.getElementById("spinner-arrow"); // DOM Object for the spinner arrow
-			spinButton = document.getElementById("spinner-button"); // DOM Object for the spin wheel <button>
 			// Generate the wheel sections
 			for (var i = 0; i < numSlices; i++) {
 				slices[i] = new Slice(i, wheel);
 			}
-			// Highlight the first slice
-			slices[0].toggleOverlay();
 		}, false);
 	</script>
 </head>
@@ -146,9 +108,6 @@
 		<circle cx="200" cy="200" r="18" fill="#444444" stroke="#222222" style="stroke-width:2px"/>
 		<circle cx="200" cy="200" r="9" fill="#666666" stroke="#222222" style="stroke-width:2px"/>
 	</svg>
-	<div id="button-holder">
-		<button id="spinner-button" onclick="toggleSpinning();">Start the Spinner!</button>
-	</div>
 </div>
 </body>
 </html>
