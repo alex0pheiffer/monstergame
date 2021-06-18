@@ -9,34 +9,23 @@
 		#wrapper {
 			width: 400px;
 			text-align: center;
-		} 
-		#button-holder {
-			width: 200px;
-			margin: auto;
-		}
-		#spinner-button {
-			width: 200px;
-			height: 75px;
-			font-size: 1.25em;
-			font-weight: bold;
 		}
 	</style>
 	<script type="text/javascript">	
 		var svgns = "http://www.w3.org/2000/svg"; // SVG Namespace (in case we need it)
 		var slices = []; // Array of wheel slice objects
-		var numSlices = 6;  // Size of the circle slices
-		var isSpinning = false; // Is the arrow spinning?
+		var numSlices = 3;  // Size of the circle slices
 		var rotation = 0; // Arrow rotation
 		var currentSlice = 0; // Current slice the arrow is over
 		var wheel; // DOM Object for the spinner board
 		var arrow; // DOM Object for the spinner arrow
-		var spinButton; // DOM Object for the spin wheel <button>
 		
 		// Basic wheel "slice" object for drawing SVG
-		function Slice(num, parent) {
+		// percentOfCircle is a double between 0 and 1, exclusive
+		function Slice(num, percentOfCircle, parent) {
 			// Set instance vars
 			this.parent = parent;
-			this.size = 360/numSlices;
+			this.size = 360 * percentOfCircle;
 			this.offset = num * this.size;
 			this.id = "slice_"+num;
 			// Draw the object
@@ -94,20 +83,58 @@
 			arrow = document.getElementById("spinner-arrow"); // DOM Object for the spinner arrow
 			// Generate the wheel sections
 			for (var i = 0; i < numSlices; i++) {
-				slices[i] = new Slice(i, wheel);
+				slices[i] = new Slice(i, 0.3333333, wheel);
 			}
+			
+			// try to save as a png
+			var canvas = document.getElementById('canvas');
+			var ctx = canvas.getContext('2d');
+
+			//var data = document.getElementById("svg-xml").outerHtml;
+			
+			var data = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
+					   '<foreignObject width="100%" height="100%">' +
+					   '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px">' +
+					   '<em>I</em> like ' + 
+					   '<span style="color:white; text-shadow:0 0 2px blue;">' +
+					   'cheese</span>' +
+					   '</div>' +
+					   '</foreignObject>' +
+					   '</svg>';
+
+		    console.log(data);
+
+
+
+			var DOMURL = window.URL || window.webkitURL || window;
+
+			var img=new Image();
+			img.crossOrigin="anonymous";
+			var svg = new Blob([data], {type: 'image/svg+xml'});
+			var url = DOMURL.createObjectURL(svg);
+
+			img.onload = function () {
+			  ctx.drawImage(img, 0, 0);
+			  DOMURL.revokeObjectURL(url);
+		
+			  var png_img = canvas.toDataURL("image/png");
+			}
+
+			img.src = url;
+
 		}, false);
 	</script>
 </head>
 <body>
-<div id="wrapper">
-	<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="400">
-		<circle cx="200" cy="200" r="180" fill="#222222"/>
-		<g id="spinner-board"></g>
-		<path id="spinner-arrow" d="M 195 200 L 195 70 L 188 70 L 200 55 L 212 70 L 205 70 205 200 Z" fill="#EEEEEE" stroke="#222222" style="stroke-width:2px"/>
-		<circle cx="200" cy="200" r="18" fill="#444444" stroke="#222222" style="stroke-width:2px"/>
-		<circle cx="200" cy="200" r="9" fill="#666666" stroke="#222222" style="stroke-width:2px"/>
-	</svg>
-</div>
+	<div id="wrapper">
+		<canvas id="canvas"></canvas>
+		<svg id="svg-xml" xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="400">
+			<circle cx="200" cy="200" r="180" fill="#222222" />
+			<g id="spinner-board"></g>
+			<path id="spinner-arrow" d="M 195 200 L 195 70 L 188 70 L 200 55 L 212 70 L 205 70 205 200 Z" fill="#EEEEEE" stroke="#222222" style="stroke-width:2px" />
+			<circle cx="200" cy="200" r="18" fill="#444444" stroke="#222222" style="stroke-width:2px" />
+			<circle cx="200" cy="200" r="9" fill="#666666" stroke="#222222" style="stroke-width:2px" />
+		</svg>
+	</div>
 </body>
 </html>
